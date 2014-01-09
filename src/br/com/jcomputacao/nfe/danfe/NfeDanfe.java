@@ -1,6 +1,7 @@
 package br.com.jcomputacao.nfe.danfe;
 
 
+import br.com.jcomputacao.nfe.danfe.util.StringUtil;
 import br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe;
 import br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe;
 import br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Cobr.Dup;
@@ -161,12 +162,12 @@ public class NfeDanfe {
         inscricaoMunicipal = emit.getIM();
 
         horaSaida = id.getHSaiEnt();
-        emitenteRazaoSocial = emit.getXNome();
-        emitenteEndereco = emit.getEnderEmit().getXLgr();
+        emitenteRazaoSocial = StringUtil.htmlIso8859decode(emit.getXNome());
+        emitenteEndereco = StringUtil.htmlIso8859decode(emit.getEnderEmit().getXLgr());
         if(emit.getEnderEmit().getNro()!=null && !"".equals(emit.getEnderEmit().getNro())) {
             emitenteEndereco += ", "+emit.getEnderEmit().getNro();
         }
-        emitenteBairro = emit.getEnderEmit().getXBairro();
+        emitenteBairro = StringUtil.htmlIso8859decode(emit.getEnderEmit().getXBairro());
         emitenteMunicipio = emit.getEnderEmit().getXMun();
         emitenteUf = emit.getEnderEmit().getUF().toString();
         emitenteInscricaoEstadual = emit.getIE();
@@ -177,17 +178,17 @@ public class NfeDanfe {
         if(emitenteTelefone!=null) {
             emitenteCep += "\n";
         }
-        destinatarioRazaoSocial = dest.getXNome();
+        destinatarioRazaoSocial = StringUtil.htmlIso8859decode(dest.getXNome());
         destinatarioCnpjCpf = (dest.getCNPJ()==null || "".equals(dest.getCNPJ())?dest.getCPF():dest.getCNPJ());
-        destinatarioEndereco = soPrimeiraMaiuscula(dest.getEnderDest().getXLgr());
+        destinatarioEndereco = soPrimeiraMaiuscula(StringUtil.htmlIso8859decode(dest.getEnderDest().getXLgr()));
         if (null != dest.getEnderDest().getNro() && !"".equals(dest.getEnderDest().getNro())
                 && !"0".equals(dest.getEnderDest().getNro())) {
             destinatarioEndereco += ", " + dest.getEnderDest().getNro();
         }
         if(null != dest.getEnderDest().getXCpl() && !"".equals(dest.getEnderDest().getXCpl())){
-            destinatarioEndereco += ", " + soPrimeiraMaiuscula(dest.getEnderDest().getXCpl());
+            destinatarioEndereco += ", " + soPrimeiraMaiuscula(StringUtil.htmlIso8859decode(dest.getEnderDest().getXCpl()));
         }
-        destinatarioBairro = dest.getEnderDest().getXBairro();
+        destinatarioBairro = StringUtil.htmlIso8859decode(dest.getEnderDest().getXBairro());
         destinatarioCep = dest.getEnderDest().getCEP();
         destinatarioMunicipio = dest.getEnderDest().getXMun();
         destinatarioFoneFax = dest.getEnderDest().getFone();
@@ -226,9 +227,9 @@ public class NfeDanfe {
         Transp transporte = inf.getTransp();
         if (transporte != null) {
             if (transporte.getTransporta() != null) {
-                transportadorRazaoSocial = transporte.getTransporta().getXNome();
+                transportadorRazaoSocial = StringUtil.htmlIso8859decode(transporte.getTransporta().getXNome());
                 transportadorCnpjCpf = transporte.getTransporta().getCNPJ();
-                transportadorEndereco = transporte.getTransporta().getXEnder();
+                transportadorEndereco = StringUtil.htmlIso8859decode(transporte.getTransporta().getXEnder());
                 transportadorMunicipio = transporte.getTransporta().getXMun();
                 transportadorUf = transporte.getTransporta().getUF().toString();
                 transportadorInscricaoEstadual = transporte.getTransporta().getIE();
