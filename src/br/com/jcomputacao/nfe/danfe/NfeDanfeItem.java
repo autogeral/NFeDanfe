@@ -4,6 +4,7 @@
  */
 package br.com.jcomputacao.nfe.danfe;
 
+import br.com.jcomputacao.nfe.danfe.util.StringUtil;
 import br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det;
 import br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det.Imposto;
 
@@ -39,7 +40,7 @@ public class NfeDanfeItem {
     public NfeDanfeItem(Det detalhe) {
         if (detalhe.getProd() != null) {
             this.codigo    = detalhe.getProd().getCProd();
-            this.descricao = detalhe.getProd().getXProd();
+            this.descricao = StringUtil.htmlIso8859decode(detalhe.getProd().getXProd());
             this.ncm       = detalhe.getProd().getNCM();
             this.cfop      = detalhe.getProd().getCFOP();
             this.valorUnitarioComercial  = detalhe.getProd().getVUnCom();
