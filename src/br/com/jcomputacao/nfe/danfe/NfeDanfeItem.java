@@ -64,7 +64,7 @@ public class NfeDanfeItem {
                 this.aliquotaIcms = imp.getICMS().getICMS00().getPICMS();
                 this.baseIcms     = imp.getICMS().getICMS00().getVBC();
                 this.valorIcms    = imp.getICMS().getICMS00().getVICMS();
-                this.cst          = imp.getICMS().getICMS00().getCST();
+                this.cst          = imp.getICMS().getICMS00().getOrig() + imp.getICMS().getICMS00().getCST();
             } else if (imp.getICMS().getICMS10() != null) {
                 this.aliquotaIcms = imp.getICMS().getICMS10().getPICMS();
                 this.baseIcms     = imp.getICMS().getICMS10().getVBC();
@@ -76,11 +76,12 @@ public class NfeDanfeItem {
                 this.valorIcms    = imp.getICMS().getICMS20().getVICMS();
                 this.cst          = imp.getICMS().getICMS20().getOrig() + imp.getICMS().getICMS20().getCST();
             } else if (imp.getICMS().getICMS30() != null) {
-                this.cst = imp.getICMS().getICMS30().getCST();
+                this.cst = imp.getICMS().getICMS30().getOrig() + imp.getICMS().getICMS30().getCST();
 //                this.aliquotaIcms = imp.getICMS().getICMS30().getAliquotaImposto();
 //                this.baseIcms = imp.getICMS().getICMS30().getValorBCdoICMS();
 //                this.valorIcms = imp.getICMS().getICMS30().getValorICMS();
             } else if (imp.getICMS().getICMS40() != null) {
+                this.cst = imp.getICMS().getICMS40().getOrig() + imp.getICMS().getICMS40().getCST();
 //                this.aliquotaIcms = imp.getICMS().getICMS40().getAliquotaImposto();
 //                this.baseIcms = imp.getICMS().getICMS40().getValorBCdoICMS();
 //                this.valorIcms = imp.getICMS().getICMS40().getValorICMS();
@@ -90,7 +91,7 @@ public class NfeDanfeItem {
                 this.valorIcms    = imp.getICMS().getICMS51().getVICMS();
                 this.cst          = imp.getICMS().getICMS51().getOrig() + imp.getICMS().getICMS51().getCST();
             } else if (imp.getICMS().getICMS60() != null) {
-                this.cst          = imp.getICMS().getICMS60().getCST();
+                this.cst = imp.getICMS().getICMS60().getOrig() + imp.getICMS().getICMS60().getCST();
             } else if (imp.getICMS().getICMS70() != null) {
                 this.cst = imp.getICMS().getICMS70().getOrig() + imp.getICMS().getICMS70().getCST();
             } else if (imp.getICMS().getICMS90() != null) {
