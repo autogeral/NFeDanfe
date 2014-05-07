@@ -174,6 +174,7 @@ public class NfeDanfe {
         emitenteInscricaoEstadualSubtributario = emit.getIEST();
         emitenteCnpj = emit.getCNPJ();
         emitenteCep = emit.getEnderEmit().getCEP();
+        
         emitenteTelefone = formataTelefone(emit.getEnderEmit().getFone());
         if(emitenteTelefone!=null) {
             emitenteCep += "\n";
@@ -1041,15 +1042,18 @@ alcançar o tamanho do campo.
     }
 
     private String formataTelefone(String fone) {
-        if (fone != null || fone.length() == 10) {
-            return "("+fone.substring(0, 2)+
-                    ")"+fone.substring(2, 6)+
-                    "-"+fone.substring(6);
-        } else if (fone != null || fone.length() == 11) {
-            return "("+fone.substring(0, 3)+
-                    ")"+fone.substring(3, 7)+
-                    "-"+fone.substring(7);
+        if (fone != null) {
+            if (fone.length() == 10) {
+                return "(" + fone.substring(0, 2)
+                        + ")" + fone.substring(2, 6)
+                        + "-" + fone.substring(6);
+            } else if (fone.length() == 11) {
+                return "(" + fone.substring(0, 3)
+                        + ")" + fone.substring(3, 7)
+                        + "-" + fone.substring(7);
+            }
         }
+        
         return fone;
     }
 
