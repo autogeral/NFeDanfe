@@ -232,7 +232,9 @@ public class NfeDanfe {
                 transportadorCnpjCpf = transporte.getTransporta().getCNPJ();
                 transportadorEndereco = StringUtil.htmlIso8859decode(transporte.getTransporta().getXEnder());
                 transportadorMunicipio = transporte.getTransporta().getXMun();
-                transportadorUf = transporte.getTransporta().getUF().toString();
+                if (null != transporte.getTransporta().getUF()) {
+                    transportadorUf = transporte.getTransporta().getUF().toString();
+                }
                 transportadorInscricaoEstadual = transporte.getTransporta().getIE();
             }
             transportadorFretePorConta = transporte.getModFrete();
