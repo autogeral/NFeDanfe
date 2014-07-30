@@ -204,14 +204,23 @@ public class NfeDanfe {
         } else if("2".equals(indPag)) {
             fatura = "outros.";
         }
-        
+        boolean insereCobrancaXmlAtravezNfesPagamentosParcelas = Boolean.parseBoolean(System.getProperty("insere.cobrancaXml.atravez.nfesPagamentosParcelas", "false"));
         if (inf.getCobr() != null && inf.getCobr().getDup() != null) {
             List<Dup> dups = inf.getCobr().getDup();
+            boolean first = true;
             for (Dup dup : dups) {
                 String dupVencimento = dup.getDVenc().substring(8)+
                         "/"+dup.getDVenc().substring(5,7)+
                         "/"+dup.getDVenc().substring(2,4);
-                fatura += " Dup."+dup.getNDup()+" "+dupVencimento+" $"+dup.getVDup().replace(".", ",");
+                if(insereCobrancaXmlAtravezNfesPagamentosParcelas) {
+                    if(first) {
+                        fatura += " Venc.: ";
+                        first = false;
+                    }
+                    fatura += dupVencimento + " R$" + dup.getVDup().replace(".", ",") + " ";
+                } else {
+                    fatura += " Dup." + dup.getNDup() + " " + dupVencimento + " $" + dup.getVDup().replace(".", ",");
+                }                
             }
         }
         baseIcms = tot.getICMSTot().getVBC();
