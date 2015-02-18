@@ -1,15 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.jcomputacao.nfe.danfe;
 
 import br.com.jcomputacao.nfe.danfe.util.StringUtil;
-import br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det;
-import br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det.Imposto;
-
 
 /**
+ * Auterando em 18/02/2015 para suportar o novo schema da NFe
  * 11/07/2010 16:56:29
  * @author Murilo
  */
@@ -37,7 +31,7 @@ public class NfeDanfeItem {
 
     }
 
-    public NfeDanfeItem(Det detalhe) {
+    public NfeDanfeItem(br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det detalhe) {
         if (detalhe.getProd() != null) {
             this.codigo    = detalhe.getProd().getCProd();
             this.descricao = StringUtil.htmlIso8859decode(detalhe.getProd().getXProd());
@@ -52,7 +46,7 @@ public class NfeDanfeItem {
             this.valorUnitarioTributario = detalhe.getProd().getVUnTrib();
             //this.codigoB = detalhe.getProd().getCodigBarras();
         }
-        Imposto imp = detalhe.getImposto();
+        br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det.Imposto imp = detalhe.getImposto();
         if(imp != null) {
             if(imp.getIPI() != null &&
                     imp.getIPI().getIPITrib()!=null) {
@@ -113,6 +107,85 @@ public class NfeDanfeItem {
                 this.cst = imp.getICMS().getICMSSN900().getOrig() + imp.getICMS().getICMSSN900().getCSOSN();
             }
         }
+        this.infCompl = detalhe.getInfAdProd();
+    }
+    
+    public NfeDanfeItem(br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Det detalhe) {
+        if (detalhe.getProd() != null) {
+            this.codigo    = detalhe.getProd().getCProd();
+            this.descricao = StringUtil.htmlIso8859decode(detalhe.getProd().getXProd());
+            this.ncm       = detalhe.getProd().getNCM();
+            this.cfop      = detalhe.getProd().getCFOP();
+            this.valorUnitarioComercial  = detalhe.getProd().getVUnCom();
+            this.unidadeComercial        = detalhe.getProd().getUCom();
+            this.quantidadeComercial     = detalhe.getProd().getQCom();
+            this.quantidadeTributaria    = detalhe.getProd().getQTrib();
+            this.valorTotal              = detalhe.getProd().getVProd();
+            this.unidadeTributaria       = detalhe.getProd().getUTrib();
+            this.valorUnitarioTributario = detalhe.getProd().getVUnTrib();
+            //this.codigoB = detalhe.getProd().getCodigBarras();
+        }
+//        br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Det.Imposto imp = detalhe.getImposto();
+//        if(imp != null) {
+//            if(imp.get.getIPI() != null &&
+//                    imp.getIPI().getIPITrib()!=null) {
+//                this.aliquotaIpi = imp.getIPI().getIPITrib().getPIPI();
+//                this.valorIpi = imp.getIPI().getIPITrib().getVIPI();
+//            }
+//
+//            if (imp.getICMS().getICMS00() != null) {
+//                this.aliquotaIcms = imp.getICMS().getICMS00().getPICMS();
+//                this.baseIcms     = imp.getICMS().getICMS00().getVBC();
+//                this.valorIcms    = imp.getICMS().getICMS00().getVICMS();
+//                this.cst          = imp.getICMS().getICMS00().getOrig() + imp.getICMS().getICMS00().getCST();
+//            } else if (imp.getICMS().getICMS10() != null) {
+//                this.aliquotaIcms = imp.getICMS().getICMS10().getPICMS();
+//                this.baseIcms     = imp.getICMS().getICMS10().getVBC();
+//                this.valorIcms    = imp.getICMS().getICMS10().getVICMS();
+//                this.cst          = imp.getICMS().getICMS10().getOrig() + imp.getICMS().getICMS10().getCST();
+//            } else if (imp.getICMS().getICMS20() != null) {
+//                this.aliquotaIcms = imp.getICMS().getICMS20().getPICMS();
+//                this.baseIcms     = imp.getICMS().getICMS20().getVBC();
+//                this.valorIcms    = imp.getICMS().getICMS20().getVICMS();
+//                this.cst          = imp.getICMS().getICMS20().getOrig() + imp.getICMS().getICMS20().getCST();
+//            } else if (imp.getICMS().getICMS30() != null) {
+//                this.cst = imp.getICMS().getICMS30().getOrig() + imp.getICMS().getICMS30().getCST();
+////                this.aliquotaIcms = imp.getICMS().getICMS30().getAliquotaImposto();
+////                this.baseIcms = imp.getICMS().getICMS30().getValorBCdoICMS();
+////                this.valorIcms = imp.getICMS().getICMS30().getValorICMS();
+//            } else if (imp.getICMS().getICMS40() != null) {
+//                this.cst = imp.getICMS().getICMS40().getOrig() + imp.getICMS().getICMS40().getCST();
+////                this.aliquotaIcms = imp.getICMS().getICMS40().getAliquotaImposto();
+////                this.baseIcms = imp.getICMS().getICMS40().getValorBCdoICMS();
+////                this.valorIcms = imp.getICMS().getICMS40().getValorICMS();
+//            } else if (imp.getICMS().getICMS51() != null) {
+//                this.aliquotaIcms = imp.getICMS().getICMS51().getPICMS();
+//                this.baseIcms     = imp.getICMS().getICMS51().getVBC();
+//                this.valorIcms    = imp.getICMS().getICMS51().getVICMS();
+//                this.cst          = imp.getICMS().getICMS51().getOrig() + imp.getICMS().getICMS51().getCST();
+//            } else if (imp.getICMS().getICMS60() != null) {
+//                this.cst = imp.getICMS().getICMS60().getOrig() + imp.getICMS().getICMS60().getCST();
+//            } else if (imp.getICMS().getICMS70() != null) {
+//                this.cst = imp.getICMS().getICMS70().getOrig() + imp.getICMS().getICMS70().getCST();
+//            } else if (imp.getICMS().getICMS90() != null) {
+//                this.cst = imp.getICMS().getICMS90().getOrig() + imp.getICMS().getICMS90().getCST();
+//            } else if (imp.getICMS().getICMSSN101() != null) {
+//                this.cst = imp.getICMS().getICMSSN101().getOrig() + imp.getICMS().getICMSSN101().getCSOSN();
+//            } else if (imp.getICMS().getICMSSN102() != null) {
+//                this.cst = imp.getICMS().getICMSSN102().getOrig() + imp.getICMS().getICMSSN102().getCSOSN();
+//            } else if (imp.getICMS().getICMSSN201() != null) {
+//                this.cst = imp.getICMS().getICMSSN201().getOrig() + imp.getICMS().getICMSSN201().getCSOSN();
+//            } else if (imp.getICMS().getICMSSN202() != null) {
+//                this.cst = imp.getICMS().getICMSSN202().getOrig() + imp.getICMS().getICMSSN202().getCSOSN();
+//            } else if (imp.getICMS().getICMSSN500() != null) {
+//                this.cst = imp.getICMS().getICMSSN500().getOrig() + imp.getICMS().getICMSSN500().getCSOSN();
+//            } else if (imp.getICMS().getICMSSN900().getOrig() != null) {
+//                this.aliquotaIcms = imp.getICMS().getICMSSN900().getPICMS();
+//                this.baseIcms = imp.getICMS().getICMSSN900().getVBC();
+//                this.valorIcms = imp.getICMS().getICMSSN900().getVICMS();
+//                this.cst = imp.getICMS().getICMSSN900().getOrig() + imp.getICMS().getICMSSN900().getCSOSN();
+//            }
+//        }
         this.infCompl = detalhe.getInfAdProd();
     }
 
