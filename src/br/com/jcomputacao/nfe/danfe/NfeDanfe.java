@@ -112,7 +112,9 @@ public class NfeDanfe {
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            dataEmissao = bdf.format(sdf.parse(id.getDEmi()));
+            if (!StringUtil.isNull(id.getDEmi())) {
+                dataEmissao = bdf.format(sdf.parse(id.getDEmi()));
+            }
             if (id.getDSaiEnt() != null) {
                 dataSaidaEntrada = bdf.format(sdf.parse(id.getDSaiEnt()));
             }
@@ -375,16 +377,18 @@ alcançar o tamanho do campo.
         serieNfe = id.getSerie();
         saidaEntrada = id.getTpNF();
         naturezaOperacao = id.getNatOp();
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            dataEmissao = bdf.format(sdf.parse(id.getDhEmi()));
-            if (id.getDhSaiEnt() != null) {
-                dataSaidaEntrada = bdf.format(sdf.parse(id.getDhSaiEnt()));
+        if (!StringUtil.isNull(id.getDhEmi())) {
+            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                dataEmissao = bdf.format(sdf.parse(id.getDhEmi()));
+                if (id.getDhSaiEnt() != null) {
+                    dataSaidaEntrada = bdf.format(sdf.parse(id.getDhSaiEnt()));
+                }
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+                System.out.println(ex);
             }
-        } catch (ParseException ex) {
-            System.out.println(ex.getMessage());
-            System.out.println(ex);
         }
 
 
