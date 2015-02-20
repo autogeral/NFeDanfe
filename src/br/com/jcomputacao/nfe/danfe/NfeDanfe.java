@@ -150,7 +150,7 @@ public class NfeDanfe {
 
         inscricaoMunicipal = emit.getIM();
 
-        horaSaida = id.getDhSaiEnt().substring(11, 19);
+        horaSaida = (id.getDhSaiEnt() != null ? id.getDhSaiEnt().substring(11, 19) : "");
         emitenteRazaoSocial = StringUtil.htmlIso8859decode(emit.getXNome());
         emitenteEndereco = StringUtil.htmlIso8859decode(emit.getEnderEmit().getXLgr());
         if(emit.getEnderEmit().getNro()!=null && !"".equals(emit.getEnderEmit().getNro())) {
