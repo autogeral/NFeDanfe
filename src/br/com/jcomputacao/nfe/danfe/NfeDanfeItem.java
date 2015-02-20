@@ -63,9 +63,9 @@ public class NfeDanfeItem {
                     }
                 }
 
-                if (j.getValue() instanceof br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det.Imposto.ICMS) {
-                    br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det.Imposto.ICMS icms = 
-                            (br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det.Imposto.ICMS) j.getValue();
+                if (j.getValue() instanceof br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Det.Imposto.ICMS) {
+                    br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Det.Imposto.ICMS icms = 
+                            (br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Det.Imposto.ICMS) j.getValue();
                     if (icms.getICMS00() != null) {
                         this.aliquotaIcms = icms.getICMS00().getPICMS();
                         this.baseIcms = icms.getICMS00().getVBC();
