@@ -97,10 +97,10 @@ public class NfeDanfe {
     private String valorPis;
     private String valorCofins;
 
-    public NfeDanfe(br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNfeProc proc) {
-        br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe nfe = proc.getNFe();
-        br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe inf = nfe.getInfNFe();
-        br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Ide id = inf.getIde();
+    public NfeDanfe(br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNfeProc proc) {
+        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe nfe = proc.getNFe();
+        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe inf = nfe.getInfNFe();
+        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Ide id = inf.getIde();
         NumberFormat nf = NumberFormat.getIntegerInstance();
         nf.setMinimumIntegerDigits(9);
         nf.setGroupingUsed(true);
@@ -112,11 +112,11 @@ public class NfeDanfe {
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            if (!StringUtil.isNull(id.getDEmi())) {
-                dataEmissao = bdf.format(sdf.parse(id.getDEmi()));
+            if (!StringUtil.isNull(id.getDhEmi())) {
+                dataEmissao = bdf.format(sdf.parse(id.getDhEmi()));
             }
-            if (id.getDSaiEnt() != null) {
-                dataSaidaEntrada = bdf.format(sdf.parse(id.getDSaiEnt()));
+            if (id.getDhSaiEnt() != null) {
+                dataSaidaEntrada = bdf.format(sdf.parse(id.getDhSaiEnt()));
             }
         } catch (ParseException ex) {
             System.out.println(ex.getMessage());
@@ -131,7 +131,275 @@ public class NfeDanfe {
         situacao = proc.getProtNFe().getInfProt().getCStat();
         if("100".equals(situacao)) {
             situacao = "AUTORIZADA";
-        } else if ("101".equals(situacao)) {
+        } else if ("101".equals(situacao) || "135".equals(situacao)) {
+            situacao = "CANCELADA";
+        } else if ("102".equals(situacao)) {
+            situacao = "INUTILIZADA";
+        }
+        protocoloDataAutorizacao = proc.getProtNFe().getInfProt().getNProt();
+        protocoloDataAutorizacao += " - ";
+        protocoloDataAutorizacao += proc.getProtNFe().getInfProt().getDhRecbto();
+
+        msgAutenticidade = "Consulta de autenticidade no portal nacional da "
+                         + "NF-e www.nfe.fazenda.gov.br/portal ou no site "
+                         + "da Sefaz Autorizadora";
+
+        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Emit emit = inf.getEmit();
+        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Dest dest = inf.getDest();
+        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Total tot = inf.getTotal();
+
+        inscricaoMunicipal = emit.getIM();
+
+        horaSaida = id.getDhSaiEnt().substring(11, 19);
+        emitenteRazaoSocial = StringUtil.htmlIso8859decode(emit.getXNome());
+        emitenteEndereco = StringUtil.htmlIso8859decode(emit.getEnderEmit().getXLgr());
+        if(emit.getEnderEmit().getNro()!=null && !"".equals(emit.getEnderEmit().getNro())) {
+            emitenteEndereco += ", "+emit.getEnderEmit().getNro();
+        }
+        emitenteBairro = StringUtil.htmlIso8859decode(emit.getEnderEmit().getXBairro());
+        emitenteMunicipio = emit.getEnderEmit().getXMun();
+        emitenteUf = emit.getEnderEmit().getUF().toString();
+        emitenteInscricaoEstadual = emit.getIE();
+        emitenteInscricaoEstadualSubtributario = emit.getIEST();
+        emitenteCnpj = emit.getCNPJ();
+        emitenteCep = emit.getEnderEmit().getCEP();
+        
+        emitenteTelefone = formataTelefone(emit.getEnderEmit().getFone());
+        if(emitenteTelefone!=null) {
+            emitenteCep += "\n";
+        }
+        destinatarioRazaoSocial = StringUtil.htmlIso8859decode(dest.getXNome());
+        destinatarioCnpjCpf = (dest.getCNPJ()==null || "".equals(dest.getCNPJ())?dest.getCPF():dest.getCNPJ());
+        destinatarioEndereco = soPrimeiraMaiuscula(StringUtil.htmlIso8859decode(dest.getEnderDest().getXLgr()));
+        if (null != dest.getEnderDest().getNro() && !"".equals(dest.getEnderDest().getNro())
+                && !"0".equals(dest.getEnderDest().getNro())) {
+            destinatarioEndereco += ", " + dest.getEnderDest().getNro();
+        }
+        if(null != dest.getEnderDest().getXCpl() && !"".equals(dest.getEnderDest().getXCpl())){
+            destinatarioEndereco += ", " + soPrimeiraMaiuscula(StringUtil.htmlIso8859decode(dest.getEnderDest().getXCpl()));
+        }
+        destinatarioBairro = StringUtil.htmlIso8859decode(dest.getEnderDest().getXBairro());
+        destinatarioCep = dest.getEnderDest().getCEP();
+        destinatarioMunicipio = dest.getEnderDest().getXMun();
+        destinatarioFoneFax = dest.getEnderDest().getFone();
+        destinatarioUf = dest.getEnderDest().getUF().toString();
+        destinatarioInscricaoEstadual = dest.getIE();
+        String indPag = inf.getIde().getIndPag();
+        
+        if("0".equals(indPag)) {
+            fatura = "pagamento à vista";
+        } else if("1".equals(indPag)) {
+            fatura = "À prazo";
+        } else if("2".equals(indPag)) {
+            fatura = "outros.";
+        }
+        boolean insereCobrancaXmlAtravezNfesPagamentosParcelas = Boolean.parseBoolean(System.getProperty("insere.cobrancaXml.atravez.nfesPagamentosParcelas", "false"));
+        if (inf.getCobr() != null && inf.getCobr().getDup() != null) {
+            List<br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
+            boolean first = true;
+            for (br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
+                String dupVencimento = dup.getDVenc().substring(8)+
+                        "/"+dup.getDVenc().substring(5,7)+
+                        "/"+dup.getDVenc().substring(2,4);
+                if(insereCobrancaXmlAtravezNfesPagamentosParcelas) {
+                    if(first) {
+                        fatura += " Venc.: ";
+                        first = false;
+                    }
+                    fatura += dupVencimento + " R$" + dup.getVDup().replace(".", ",") + " ";
+                } else {
+                    fatura += " Dup." + dup.getNDup() + " " + dupVencimento + " $" + dup.getVDup().replace(".", ",");
+                }                
+            }
+        }
+        baseIcms = tot.getICMSTot().getVBC();
+        valorIcms = tot.getICMSTot().getVICMS();
+        baseIcmsSubstituicao = tot.getICMSTot().getVBCST();
+        valorIcmsSubstituicao = tot.getICMSTot().getVST();
+        valorTotalProduto = tot.getICMSTot().getVProd();
+        valorFrete = tot.getICMSTot().getVFrete();
+        valorSeguro = tot.getICMSTot().getVSeg();
+        desconto = tot.getICMSTot().getVDesc();
+        outrasDespesas = tot.getICMSTot().getVOutro();
+        valorIpi = tot.getICMSTot().getVIPI();
+        valorTotalNota = tot.getICMSTot().getVNF();
+        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Transp transporte = inf.getTransp();
+        if (transporte != null) {
+            if (transporte.getTransporta() != null) {
+                transportadorRazaoSocial = StringUtil.htmlIso8859decode(transporte.getTransporta().getXNome());
+                transportadorCnpjCpf = transporte.getTransporta().getCNPJ();
+                transportadorEndereco = StringUtil.htmlIso8859decode(transporte.getTransporta().getXEnder());
+                transportadorMunicipio = transporte.getTransporta().getXMun();
+                if (null != transporte.getTransporta().getUF()) {
+                    transportadorUf = transporte.getTransporta().getUF().toString();
+                }
+                transportadorInscricaoEstadual = transporte.getTransporta().getIE();
+            }
+            transportadorFretePorConta = transporte.getModFrete();
+            if (transporte.getVeicTransp() != null) {
+                transportadorCodigoAntt = transporte.getVeicTransp().getRNTC();
+                transportadorPlacaVeiculo = transporte.getVeicTransp().getPlaca();
+                transportadorUfVeiculo = transporte.getVeicTransp().getUF().toString();
+
+            }
+        }
+        
+        if(transporte.getVol() != null && !transporte.getVol().isEmpty()){
+            List<br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Transp.Vol> volumes = transporte.getVol();
+            for(br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Transp.Vol volume:volumes){
+                transportadorPesoBruto = volume.getPesoB();
+                transportadorPesoLiquido = volume.getPesoL();
+                transportadorEspecie = volume.getEsp();
+                transportadorMarca = volume.getMarca();
+                transportadorQuantidade = volume.getQVol();
+                transportadorNumeracao = volume.getNVol();
+            }
+        }
+
+        if (tot != null) {
+            br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Total.ISSQNtot issqn = tot.getISSQNtot();
+            if (issqn != null) {
+                valorTotalServicos = issqn.getVServ();
+                valorPis    = issqn.getVPIS();
+                valorCofins = issqn.getVCOFINS();
+                baseIssqn   = issqn.getVBC();
+                valorIssqn  = issqn.getVISS();
+            }
+        }
+        tipoEmissao = id.getTpEmis();
+        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.InfAdic infAd = inf.getInfAdic();
+        if (infAd != null) {
+            informacoesComplementares = infAd.getInfCpl();
+            if(informacoesComplementares==null) {
+                informacoesComplementares = "";
+            }
+                
+            informacoesComplementares2 = infAd.getInfAdFisco();
+            if (informacoesComplementares2 != null) {
+                if(!"".equals(informacoesComplementares)){
+                    informacoesComplementares += "\n";
+                }
+                informacoesComplementares += "Informações Adicionais de Interesse do Fisco: ";
+                informacoesComplementares += informacoesComplementares2;
+            }
+        }
+
+        chaveAcesso = inf.getId().replace("NFe", "");
+        StringBuilder sb = new StringBuilder();
+        int limit = 10;
+        for(int i=0;i<=limit;i++) {
+            int j = i*4;
+            sb.append(chaveAcesso.substring(j, j+4));
+            if(i<limit) {
+                sb.append(" ");
+            }
+        }
+
+        chaveAcesso = sb.toString();
+        /**
+         *
+         * O Código de Barras Adicional dos Dados da NF-e será formado pelo seguinte conteúdo, em
+um total de 36 caracteres:
+cUF tpEmis CNPJ vNF ICMSp ICMSs DD DV
+Quantidade de caracteres 02 01 14 14 01 01 02 01
+- cUF = Código da UF do destinatário ou remetente do Documento Fiscal, informar 99 quando a
+operação for de comércio exterior;
+- tpEmis = Forma de Emissão da NF-e, informar 2-Contingência FS ou 5- Contingência FS-DA,
+conforme o Anexo I.
+- CNPJ = CNPJ do destinatário ou do remetente, informar zeros no caso de operação com o exterior
+ou o CPF caso o destinatário ou remetente seja pessoa física;
+- vNF = Valor Total da NF-e (sem ponto decimal, informar sempre os centavos);
+- DD = Dia da emissão da NF-e;
+- DV = Dígito Verificador, calculado de forma igual ao DV da Chave de Acesso (item 5.4).
+Obs. Todos os campos que formam o código de barras devem ser preenchidos com
+alinhamento à direita, sem formatação e com os zeros não significativos necessários para
+alcançar o tamanho do campo.
+
+         */
+        String uf   = inf.getIde().getCUF();
+        tipoEmissao = inf.getIde().getTpEmis();
+        codigoTipoEmissao = tipoEmissao;
+        String codigoBarrasString = uf+tipoEmissao+emitenteCnpj+somenteNumeros(valorTotalNota, 14);
+
+        /**
+         * ICMSp = Destaque de ICMS próprio na NF-e no seguinte formato:
+         * 1 = há destaque de ICMS próprio;
+         * 2 = não há destaque de ICMS próprio.
+         */
+        Double valor = Double.parseDouble(this.valorIcms);
+        codigoBarrasString += (valor>0?"1":"2");
+
+        /**
+         * ICMSs = Destaque de ICMS por substituição tributária na NF-e, no seguinte formato:
+         * 1 = há destaque de ICMS por substituição tributária;
+         * 2 = não há destaque de ICMS por substituição tributária.
+         */
+        valor = Double.parseDouble(this.valorIcmsSubstituicao);
+        codigoBarrasString += (valor>0?"1":"2");
+
+        /**
+         * Somente dia de emissao
+         */
+        codigoBarrasString += dataEmissao.substring(0, 2);
+        codigoBarrasString += getDigitoCodigoBarras(codigoBarrasString);
+        formataChaveAcesso(chaveAcesso);
+        codigoBarrasString = chaveAcesso;
+        try {
+            Barcode barcode = net.sourceforge.barbecue.BarcodeFactory.createCode128C(codigoBarrasString);
+            barcode.setDrawingText(false);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            BarcodeImageHandler.writePNG(barcode, baos);
+            byte[] bytes = baos.toByteArray();
+            ImageIcon image = new ImageIcon(bytes);
+            codigoBarras = image.getImage();
+        } catch (OutputException ex) {
+            ex.printStackTrace();
+        } catch (BarcodeException ex) {
+            ex.printStackTrace();
+        }
+        
+
+        List<br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Det> detalhes = inf.getDet();
+        for(br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Det detalhe:detalhes) {
+            this.itens.add(new NfeDanfeItem(detalhe));
+        }
+    }
+
+    public NfeDanfe(br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNfeProc proc) {
+        br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe nfe = proc.getNFe();
+        br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe inf = nfe.getInfNFe();
+        br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Ide id = inf.getIde();
+        NumberFormat nf = NumberFormat.getIntegerInstance();
+        nf.setMinimumIntegerDigits(9);
+        nf.setGroupingUsed(true);
+        Long longNNfe = new Long(id.getNNF());
+        numeroNfe = nf.format(longNNfe);
+        serieNfe = id.getSerie();
+        saidaEntrada = id.getTpNF();
+        naturezaOperacao = id.getNatOp();
+        if (!StringUtil.isNull(id.getDEmi())) {
+            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                dataEmissao = bdf.format(sdf.parse(id.getDEmi()));
+                if (id.getDSaiEnt() != null) {
+                    dataSaidaEntrada = bdf.format(sdf.parse(id.getDSaiEnt()));
+                }
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+                System.out.println(ex);
+            }
+        }
+
+
+//        proc.getProtocolo().getInformacoes().getNumeroProtocolo();
+//        proc.getProtocolo().getInformacoes().getDataHoraRecebimento();
+//        proc.getProtocolo().getInformacoes().getTipoAmbiente();GHH
+//        proc.getProtocolo().getInformacoes().getDataHoraRecebimento();
+        situacao = proc.getProtNFe().getInfProt().getCStat();
+        if("100".equals(situacao)) {
+            situacao = "AUTORIZADA";
+        } else if ("101".equals(situacao) || "135".equals(situacao)) {
             situacao = "CANCELADA";
         } else if ("102".equals(situacao)) {
             situacao = "INUTILIZADA";
@@ -361,274 +629,6 @@ alcançar o tamanho do campo.
 
         List<br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det> detalhes = inf.getDet();
         for(br.inf.portalfiscal.nfe.xml.pl006q.nfes.TNFe.InfNFe.Det detalhe:detalhes) {
-            this.itens.add(new NfeDanfeItem(detalhe));
-        }
-    }
-
-    public NfeDanfe(br.inf.portalfiscal.nfe.schema.nfe.TNfeProc proc) {
-        br.inf.portalfiscal.nfe.schema.nfe.TNFe nfe = proc.getNFe();
-        br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe inf = nfe.getInfNFe();
-        br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Ide id = inf.getIde();
-        NumberFormat nf = NumberFormat.getIntegerInstance();
-        nf.setMinimumIntegerDigits(9);
-        nf.setGroupingUsed(true);
-        Long longNNfe = new Long(id.getNNF());
-        numeroNfe = nf.format(longNNfe);
-        serieNfe = id.getSerie();
-        saidaEntrada = id.getTpNF();
-        naturezaOperacao = id.getNatOp();
-        if (!StringUtil.isNull(id.getDhEmi())) {
-            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
-            try {
-                dataEmissao = bdf.format(sdf.parse(id.getDhEmi()));
-                if (id.getDhSaiEnt() != null) {
-                    dataSaidaEntrada = bdf.format(sdf.parse(id.getDhSaiEnt()));
-                }
-            } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
-                System.out.println(ex);
-            }
-        }
-
-
-//        proc.getProtocolo().getInformacoes().getNumeroProtocolo();
-//        proc.getProtocolo().getInformacoes().getDataHoraRecebimento();
-//        proc.getProtocolo().getInformacoes().getTipoAmbiente();GHH
-//        proc.getProtocolo().getInformacoes().getDataHoraRecebimento();
-        situacao = proc.getProtNFe().getInfProt().getCStat();
-        if("100".equals(situacao)) {
-            situacao = "AUTORIZADA";
-        } else if ("101".equals(situacao)) {
-            situacao = "CANCELADA";
-        } else if ("102".equals(situacao)) {
-            situacao = "INUTILIZADA";
-        }
-        protocoloDataAutorizacao = proc.getProtNFe().getInfProt().getNProt();
-        protocoloDataAutorizacao += " - ";
-        protocoloDataAutorizacao += proc.getProtNFe().getInfProt().getDhRecbto();
-
-        msgAutenticidade = "Consulta de autenticidade no portal nacional da "
-                         + "NF-e www.nfe.fazenda.gov.br/portal ou no site "
-                         + "da Sefaz Autorizadora";
-
-        br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Emit emit = inf.getEmit();
-        br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Dest dest = inf.getDest();
-        br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Total tot = inf.getTotal();
-
-        inscricaoMunicipal = emit.getIM();
-
-        horaSaida = id.getDhSaiEnt();
-        emitenteRazaoSocial = StringUtil.htmlIso8859decode(emit.getXNome());
-        emitenteEndereco = StringUtil.htmlIso8859decode(emit.getEnderEmit().getXLgr());
-        if(emit.getEnderEmit().getNro()!=null && !"".equals(emit.getEnderEmit().getNro())) {
-            emitenteEndereco += ", "+emit.getEnderEmit().getNro();
-        }
-        emitenteBairro = StringUtil.htmlIso8859decode(emit.getEnderEmit().getXBairro());
-        emitenteMunicipio = emit.getEnderEmit().getXMun();
-        emitenteUf = emit.getEnderEmit().getUF().toString();
-        emitenteInscricaoEstadual = emit.getIE();
-        emitenteInscricaoEstadualSubtributario = emit.getIEST();
-        emitenteCnpj = emit.getCNPJ();
-        emitenteCep = emit.getEnderEmit().getCEP();
-        
-        emitenteTelefone = formataTelefone(emit.getEnderEmit().getFone());
-        if(emitenteTelefone!=null) {
-            emitenteCep += "\n";
-        }
-        destinatarioRazaoSocial = StringUtil.htmlIso8859decode(dest.getXNome());
-        destinatarioCnpjCpf = (dest.getCNPJ()==null || "".equals(dest.getCNPJ())?dest.getCPF():dest.getCNPJ());
-        destinatarioEndereco = soPrimeiraMaiuscula(StringUtil.htmlIso8859decode(dest.getEnderDest().getXLgr()));
-        if (null != dest.getEnderDest().getNro() && !"".equals(dest.getEnderDest().getNro())
-                && !"0".equals(dest.getEnderDest().getNro())) {
-            destinatarioEndereco += ", " + dest.getEnderDest().getNro();
-        }
-        if(null != dest.getEnderDest().getXCpl() && !"".equals(dest.getEnderDest().getXCpl())){
-            destinatarioEndereco += ", " + soPrimeiraMaiuscula(StringUtil.htmlIso8859decode(dest.getEnderDest().getXCpl()));
-        }
-        destinatarioBairro = StringUtil.htmlIso8859decode(dest.getEnderDest().getXBairro());
-        destinatarioCep = dest.getEnderDest().getCEP();
-        destinatarioMunicipio = dest.getEnderDest().getXMun();
-        destinatarioFoneFax = dest.getEnderDest().getFone();
-        destinatarioUf = dest.getEnderDest().getUF().toString();
-        destinatarioInscricaoEstadual = dest.getIE();
-        String indPag = inf.getIde().getIndPag();
-        
-        if("0".equals(indPag)) {
-            fatura = "pagamento à vista";
-        } else if("1".equals(indPag)) {
-            fatura = "À prazo";
-        } else if("2".equals(indPag)) {
-            fatura = "outros.";
-        }
-        boolean insereCobrancaXmlAtravezNfesPagamentosParcelas = Boolean.parseBoolean(System.getProperty("insere.cobrancaXml.atravez.nfesPagamentosParcelas", "false"));
-        if (inf.getCobr() != null && inf.getCobr().getDup() != null) {
-            List<br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
-            boolean first = true;
-            for (br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Cobr.Dup dup : dups) {
-                String dupVencimento = dup.getDVenc().substring(8)+
-                        "/"+dup.getDVenc().substring(5,7)+
-                        "/"+dup.getDVenc().substring(2,4);
-                if(insereCobrancaXmlAtravezNfesPagamentosParcelas) {
-                    if(first) {
-                        fatura += " Venc.: ";
-                        first = false;
-                    }
-                    fatura += dupVencimento + " R$" + dup.getVDup().replace(".", ",") + " ";
-                } else {
-                    fatura += " Dup." + dup.getNDup() + " " + dupVencimento + " $" + dup.getVDup().replace(".", ",");
-                }                
-            }
-        }
-        baseIcms = tot.getICMSTot().getVBC();
-        valorIcms = tot.getICMSTot().getVICMS();
-        baseIcmsSubstituicao = tot.getICMSTot().getVBCST();
-        valorIcmsSubstituicao = tot.getICMSTot().getVST();
-        valorTotalProduto = tot.getICMSTot().getVProd();
-        valorFrete = tot.getICMSTot().getVFrete();
-        valorSeguro = tot.getICMSTot().getVSeg();
-        desconto = tot.getICMSTot().getVDesc();
-        outrasDespesas = tot.getICMSTot().getVOutro();
-        valorIpi = tot.getICMSTot().getVIPI();
-        valorTotalNota = tot.getICMSTot().getVNF();
-        br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Transp transporte = inf.getTransp();
-        if (transporte != null) {
-            if (transporte.getTransporta() != null) {
-                transportadorRazaoSocial = StringUtil.htmlIso8859decode(transporte.getTransporta().getXNome());
-                transportadorCnpjCpf = transporte.getTransporta().getCNPJ();
-                transportadorEndereco = StringUtil.htmlIso8859decode(transporte.getTransporta().getXEnder());
-                transportadorMunicipio = transporte.getTransporta().getXMun();
-                if (null != transporte.getTransporta().getUF()) {
-                    transportadorUf = transporte.getTransporta().getUF().toString();
-                }
-                transportadorInscricaoEstadual = transporte.getTransporta().getIE();
-            }
-            transportadorFretePorConta = transporte.getModFrete();
-            if (transporte.getVeicTransp() != null) {
-                transportadorCodigoAntt = transporte.getVeicTransp().getRNTC();
-                transportadorPlacaVeiculo = transporte.getVeicTransp().getPlaca();
-                transportadorUfVeiculo = transporte.getVeicTransp().getUF().toString();
-
-            }
-        }
-        
-        if(transporte.getVol() != null && !transporte.getVol().isEmpty()){
-            List<br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Transp.Vol> volumes = transporte.getVol();
-            for(br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Transp.Vol volume:volumes){
-                transportadorPesoBruto = volume.getPesoB();
-                transportadorPesoLiquido = volume.getPesoL();
-                transportadorEspecie = volume.getEsp();
-                transportadorMarca = volume.getMarca();
-                transportadorQuantidade = volume.getQVol();
-                transportadorNumeracao = volume.getNVol();
-            }
-        }
-
-        if (tot != null) {
-            br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Total.ISSQNtot issqn = tot.getISSQNtot();
-            if (issqn != null) {
-                valorTotalServicos = issqn.getVServ();
-                valorPis    = issqn.getVPIS();
-                valorCofins = issqn.getVCOFINS();
-                baseIssqn   = issqn.getVBC();
-                valorIssqn  = issqn.getVISS();
-            }
-        }
-        tipoEmissao = id.getTpEmis();
-        br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.InfAdic infAd = inf.getInfAdic();
-        if (infAd != null) {
-            informacoesComplementares = infAd.getInfCpl();
-            if(informacoesComplementares==null) {
-                informacoesComplementares = "";
-            }
-                
-            informacoesComplementares2 = infAd.getInfAdFisco();
-            if (informacoesComplementares2 != null) {
-                if(!"".equals(informacoesComplementares)){
-                    informacoesComplementares += "\n";
-                }
-                informacoesComplementares += "Informações Adicionais de Interesse do Fisco: ";
-                informacoesComplementares += informacoesComplementares2;
-            }
-        }
-
-        chaveAcesso = inf.getId().replace("NFe", "");
-        StringBuilder sb = new StringBuilder();
-        int limit = 10;
-        for(int i=0;i<=limit;i++) {
-            int j = i*4;
-            sb.append(chaveAcesso.substring(j, j+4));
-            if(i<limit) {
-                sb.append(" ");
-            }
-        }
-
-        chaveAcesso = sb.toString();
-        /**
-         *
-         * O Código de Barras Adicional dos Dados da NF-e será formado pelo seguinte conteúdo, em
-um total de 36 caracteres:
-cUF tpEmis CNPJ vNF ICMSp ICMSs DD DV
-Quantidade de caracteres 02 01 14 14 01 01 02 01
-- cUF = Código da UF do destinatário ou remetente do Documento Fiscal, informar 99 quando a
-operação for de comércio exterior;
-- tpEmis = Forma de Emissão da NF-e, informar 2-Contingência FS ou 5- Contingência FS-DA,
-conforme o Anexo I.
-- CNPJ = CNPJ do destinatário ou do remetente, informar zeros no caso de operação com o exterior
-ou o CPF caso o destinatário ou remetente seja pessoa física;
-- vNF = Valor Total da NF-e (sem ponto decimal, informar sempre os centavos);
-- DD = Dia da emissão da NF-e;
-- DV = Dígito Verificador, calculado de forma igual ao DV da Chave de Acesso (item 5.4).
-Obs. Todos os campos que formam o código de barras devem ser preenchidos com
-alinhamento à direita, sem formatação e com os zeros não significativos necessários para
-alcançar o tamanho do campo.
-
-         */
-        String uf   = inf.getIde().getCUF();
-        tipoEmissao = inf.getIde().getTpEmis();
-        codigoTipoEmissao = tipoEmissao;
-        String codigoBarrasString = uf+tipoEmissao+emitenteCnpj+somenteNumeros(valorTotalNota, 14);
-
-        /**
-         * ICMSp = Destaque de ICMS próprio na NF-e no seguinte formato:
-         * 1 = há destaque de ICMS próprio;
-         * 2 = não há destaque de ICMS próprio.
-         */
-        Double valor = Double.parseDouble(this.valorIcms);
-        codigoBarrasString += (valor>0?"1":"2");
-
-        /**
-         * ICMSs = Destaque de ICMS por substituição tributária na NF-e, no seguinte formato:
-         * 1 = há destaque de ICMS por substituição tributária;
-         * 2 = não há destaque de ICMS por substituição tributária.
-         */
-        valor = Double.parseDouble(this.valorIcmsSubstituicao);
-        codigoBarrasString += (valor>0?"1":"2");
-
-        /**
-         * Somente dia de emissao
-         */
-        codigoBarrasString += dataEmissao.substring(0, 2);
-        codigoBarrasString += getDigitoCodigoBarras(codigoBarrasString);
-        formataChaveAcesso(chaveAcesso);
-        codigoBarrasString = chaveAcesso;
-        try {
-            Barcode barcode = net.sourceforge.barbecue.BarcodeFactory.createCode128C(codigoBarrasString);
-            barcode.setDrawingText(false);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BarcodeImageHandler.writePNG(barcode, baos);
-            byte[] bytes = baos.toByteArray();
-            ImageIcon image = new ImageIcon(bytes);
-            codigoBarras = image.getImage();
-        } catch (OutputException ex) {
-            ex.printStackTrace();
-        } catch (BarcodeException ex) {
-            ex.printStackTrace();
-        }
-        
-
-        List<br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Det> detalhes = inf.getDet();
-        for(br.inf.portalfiscal.nfe.schema.nfe.TNFe.InfNFe.Det detalhe:detalhes) {
             this.itens.add(new NfeDanfeItem(detalhe));
         }
     }
