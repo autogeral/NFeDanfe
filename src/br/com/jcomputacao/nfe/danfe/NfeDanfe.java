@@ -378,7 +378,7 @@ alcançar o tamanho do campo.
         saidaEntrada = id.getTpNF();
         naturezaOperacao = id.getNatOp();
         if (!StringUtil.isNull(id.getDEmi())) {
-            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
             try {
                 dataEmissao = bdf.format(sdf.parse(id.getDEmi()));
