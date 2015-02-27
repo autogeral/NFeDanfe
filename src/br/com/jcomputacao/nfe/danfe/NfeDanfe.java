@@ -96,6 +96,7 @@ public class NfeDanfe {
     private List<NfeDanfeItem> itens = new ArrayList<NfeDanfeItem>();
     private String valorPis;
     private String valorCofins;
+    private final int versao;
 
     public NfeDanfe(br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNfeProc proc) {
         br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe nfe = proc.getNFe();
@@ -105,14 +106,16 @@ public class NfeDanfe {
         nf.setMinimumIntegerDigits(9);
         nf.setGroupingUsed(true);
         Long longNNfe = new Long(id.getNNF());
+        versao = 310;
         numeroNfe = nf.format(longNNfe);
         serieNfe = id.getSerie();
         saidaEntrada = id.getTpNF();
         naturezaOperacao = id.getNatOp();
-        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            if (!StringUtil.isNull(id.getDhEmi())) {
+            String emissao = id.getDhEmi();
+            if (!StringUtil.isNull(emissao)) {
                 dataEmissao = bdf.format(sdf.parse(id.getDhEmi()));
             }
             if (id.getDhSaiEnt() != null) {
@@ -372,14 +375,14 @@ alcançar o tamanho do campo.
         NumberFormat nf = NumberFormat.getIntegerInstance();
         nf.setMinimumIntegerDigits(9);
         nf.setGroupingUsed(true);
+        versao = 200;
         Long longNNfe = new Long(id.getNNF());
         numeroNfe = nf.format(longNNfe);
         serieNfe = id.getSerie();
         saidaEntrada = id.getTpNF();
         naturezaOperacao = id.getNatOp();
-        
-        
-        if (!StringUtil.isNull(id.getDEmi())) {
+        String emissao = id.getDEmi();
+        if (!StringUtil.isNull(emissao)) {
             DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
             try {
@@ -612,7 +615,13 @@ alcançar o tamanho do campo.
         /**
          * Somente dia de emissao
          */
-        codigoBarrasString += dataEmissao.substring(0, 2);
+        if (versao == 200) {
+            codigoBarrasString += dataEmissao.substring(0, 2);
+        } else if (versao == 310) {
+            codigoBarrasString += dataEmissao.substring(0, 2);
+        } else {
+            codigoBarrasString += "00";
+        }
         codigoBarrasString += getDigitoCodigoBarras(codigoBarrasString);
         formataChaveAcesso(chaveAcesso);
         codigoBarrasString = chaveAcesso;
