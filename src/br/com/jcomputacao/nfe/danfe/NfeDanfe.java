@@ -377,11 +377,15 @@ alcançar o tamanho do campo.
         serieNfe = id.getSerie();
         saidaEntrada = id.getTpNF();
         naturezaOperacao = id.getNatOp();
+        
+        
         if (!StringUtil.isNull(id.getDEmi())) {
             DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             DateFormat bdf = new SimpleDateFormat("dd/MM/yyyy");
             try {
-                dataEmissao = bdf.format(sdf.parse(id.getDEmi()));
+                if (!StringUtil.isNull(id.getDEmi())) {
+                    dataEmissao = bdf.format(sdf.parse(id.getDEmi()));
+                }
                 if (id.getDSaiEnt() != null) {
                     dataSaidaEntrada = bdf.format(sdf.parse(id.getDSaiEnt()));
                 }
