@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.xml.datatype.XMLGregorianCalendar;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeException;
 import net.sourceforge.barbecue.BarcodeImageHandler;
@@ -140,8 +141,8 @@ public class NfeDanfe {
             situacao = "INUTILIZADA";
         }
         protocoloDataAutorizacao = proc.getProtNFe().getInfProt().getNProt();
-        protocoloDataAutorizacao += " - ";
-        protocoloDataAutorizacao += proc.getProtNFe().getInfProt().getDhRecbto();
+        protocoloDataAutorizacao += " - ";        
+        protocoloDataAutorizacao += proc.getProtNFe().getInfProt().getDhRecbto().toString();
 
         msgAutenticidade = "Consulta de autenticidade no portal nacional da "
                          + "NF-e www.nfe.fazenda.gov.br/portal ou no site "
@@ -413,7 +414,7 @@ alcançar o tamanho do campo.
         }
         protocoloDataAutorizacao = proc.getProtNFe().getInfProt().getNProt();
         protocoloDataAutorizacao += " - ";
-        protocoloDataAutorizacao += proc.getProtNFe().getInfProt().getDhRecbto();
+        protocoloDataAutorizacao += proc.getProtNFe().getInfProt().getDhRecbto().toString();
 
         msgAutenticidade = "Consulta de autenticidade no portal nacional da "
                          + "NF-e www.nfe.fazenda.gov.br/portal ou no site "
