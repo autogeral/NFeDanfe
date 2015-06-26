@@ -202,9 +202,12 @@ public class NfeDanfe {
             List<br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
             boolean first = true;
             for (br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
-                String dupVencimento = dup.getDVenc().substring(8)+
-                        "/"+dup.getDVenc().substring(5,7)+
-                        "/"+dup.getDVenc().substring(2,4);
+                String dupVencimento = "";
+                if (dup != null && dup.getDVenc() != null && dup.getDVenc().length() > 8) {
+                    dupVencimento = dup.getDVenc().substring(8)
+                            + "/" + dup.getDVenc().substring(5, 7)
+                            + "/" + dup.getDVenc().substring(2, 4);
+                }
                 if(insereCobrancaXmlAtravezNfesPagamentosParcelas) {
                     if(first) {
                         fatura += " Venc.: ";
