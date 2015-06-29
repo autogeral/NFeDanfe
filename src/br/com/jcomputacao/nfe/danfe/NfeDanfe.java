@@ -1322,7 +1322,7 @@ alcançar o tamanho do campo.
     }
 
     private String formataCep(String cep) {
-        if (cep != null || cep.length() == 8) {
+        if (cep != null && cep.length() == 8) {
             return cep.substring(0, 5) + "-" + cep.substring(5);
         }
         return cep;
