@@ -100,6 +100,9 @@ public class NfeDanfeItem {
                         this.cst = icms.getICMS60().getOrig() + icms.getICMS60().getCST();
                     } else if (icms.getICMS70() != null) {
                         this.cst = icms.getICMS70().getOrig() + icms.getICMS70().getCST();
+                        this.baseIcms = icms.getICMS70().getVBC();
+                        this.aliquotaIcms = icms.getICMS70().getPICMS();
+                        this.valorIcms = icms.getICMS70().getVICMS();
                     } else if (icms.getICMS90() != null) {
                         this.cst = icms.getICMS90().getOrig() + icms.getICMS90().getCST();
                     } else if (icms.getICMSSN101() != null) {
