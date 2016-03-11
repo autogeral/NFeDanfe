@@ -98,10 +98,10 @@ public class NfeDanfe {
     private String valorCofins;
     private final int versao;
 
-    public NfeDanfe(br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNfeProc proc) {
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe nfe = proc.getNFe();
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe inf = nfe.getInfNFe();
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Ide id = inf.getIde();
+    public NfeDanfe(br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNfeProc proc) {
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe nfe = proc.getNFe();
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe inf = nfe.getInfNFe();
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Ide id = inf.getIde();
         NumberFormat nf = NumberFormat.getIntegerInstance();
         nf.setMinimumIntegerDigits(9);
         nf.setGroupingUsed(true);
@@ -147,9 +147,9 @@ public class NfeDanfe {
                          + "NF-e www.nfe.fazenda.gov.br/portal ou no site "
                          + "da Sefaz Autorizadora";
 
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Emit emit = inf.getEmit();
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Dest dest = inf.getDest();
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Total tot = inf.getTotal();
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Emit emit = inf.getEmit();
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Dest dest = inf.getDest();
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Total tot = inf.getTotal();
 
         inscricaoMunicipal = emit.getIM();
 
@@ -198,9 +198,9 @@ public class NfeDanfe {
         }
         boolean insereCobrancaXmlAtravezNfesPagamentosParcelas = Boolean.parseBoolean(System.getProperty("insere.cobrancaXml.atravez.nfesPagamentosParcelas", "false"));
         if (inf.getCobr() != null && inf.getCobr().getDup() != null) {
-            List<br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
+            List<br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
             boolean first = true;
-            for (br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
+            for (br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
                 String dupVencimento = "";
                 if (dup != null && dup.getDVenc() != null && dup.getDVenc().length() > 8) {
                     dupVencimento = dup.getDVenc().substring(8)
@@ -229,7 +229,7 @@ public class NfeDanfe {
         outrasDespesas = tot.getICMSTot().getVOutro();
         valorIpi = tot.getICMSTot().getVIPI();
         valorTotalNota = tot.getICMSTot().getVNF();
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Transp transporte = inf.getTransp();
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Transp transporte = inf.getTransp();
         if (transporte != null) {
             if (transporte.getTransporta() != null) {
                 transportadorRazaoSocial = StringUtil.htmlIso8859decode(transporte.getTransporta().getXNome());
@@ -251,8 +251,8 @@ public class NfeDanfe {
         }
         
         if(transporte.getVol() != null && !transporte.getVol().isEmpty()){
-            List<br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Transp.Vol> volumes = transporte.getVol();
-            for(br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Transp.Vol volume:volumes){
+            List<br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Transp.Vol> volumes = transporte.getVol();
+            for(br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Transp.Vol volume:volumes){
                 transportadorPesoBruto = volume.getPesoB();
                 transportadorPesoLiquido = volume.getPesoL();
                 transportadorEspecie = volume.getEsp();
@@ -263,7 +263,7 @@ public class NfeDanfe {
         }
 
         if (tot != null) {
-            br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Total.ISSQNtot issqn = tot.getISSQNtot();
+            br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Total.ISSQNtot issqn = tot.getISSQNtot();
             if (issqn != null) {
                 valorTotalServicos = issqn.getVServ();
                 valorPis    = issqn.getVPIS();
@@ -273,7 +273,7 @@ public class NfeDanfe {
             }
         }
         tipoEmissao = id.getTpEmis();
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.InfAdic infAd = inf.getInfAdic();
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.InfAdic infAd = inf.getInfAdic();
         if (infAd != null) {
             informacoesComplementares = infAd.getInfCpl();
             if(informacoesComplementares==null) {
@@ -365,8 +365,8 @@ alcançar o tamanho do campo.
         }
         
 
-        List<br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Det> detalhes = inf.getDet();
-        for(br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNFe.InfNFe.Det detalhe:detalhes) {
+        List<br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Det> detalhes = inf.getDet();
+        for(br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNFe.InfNFe.Det detalhe:detalhes) {
             this.itens.add(new NfeDanfeItem(detalhe));
         }
     }
