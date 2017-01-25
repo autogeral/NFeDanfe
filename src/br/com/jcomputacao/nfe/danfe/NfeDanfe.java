@@ -285,7 +285,10 @@ public class NfeDanfe {
                 if(!"".equals(informacoesComplementares)){
                     informacoesComplementares += "\n";
                 }
-                informacoesComplementares += "Informações Adicionais de Interesse do Fisco: ";
+                boolean usaFraseInteresseFisco = Boolean.parseBoolean(System.getProperty("nfe.danfe.frase.fisco", "true"));
+                if (usaFraseInteresseFisco) {
+                    informacoesComplementares += "Informações Adicionais de Interesse do Fisco: ";
+                }
                 informacoesComplementares += informacoesComplementares2;
             }
         }
