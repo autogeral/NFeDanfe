@@ -54,7 +54,7 @@ public class DanfeHelperTest {
         JAXBContext context = JAXBContext.newInstance("br.inf.portalfiscal.nfe.xml.pl008f.nfes");
         Unmarshaller unmarshaller = context.createUnmarshaller();
         ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-        br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNfeProc proc = unmarshaller.unmarshal(new StreamSource(bais), br.inf.portalfiscal.nfe.xml.pl008f.nfes.TNfeProc.class).getValue();
+        br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNfeProc proc = unmarshaller.unmarshal(new StreamSource(bais), br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNfeProc.class).getValue();
         bais.close();
         NfeDanfe danfe = new NfeDanfe(proc);
         nfes.add(danfe);
