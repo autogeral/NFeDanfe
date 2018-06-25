@@ -84,6 +84,71 @@ public class DanfeHelper {
         }
     }
     
+    public JasperPrint imprimirNfe400(br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc proc, Image logotipo) throws JRException, IOException {
+        List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc> l = new ArrayList<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc>();
+        l.add(proc);
+        return imprimirNfe400(l, logotipo);
+    }
+    
+    public JasperPrint imprimirNfe400(List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc> procs, Image logotipo) throws JRException, IOException {
+        InputStream is = null;
+        InputStream isi = null;
+        InputStream isic = null;
+        try {
+            String jasper = "/br/com/jcomputacao/nfe/danfe/ImpressaoDanfeRetratoA4Report.jasper";
+            is   = this.getClass().getResource(jasper).openStream();
+            if(is==null) {
+                System.out.println("Nao consegui ler o arquivo : "+jasper);
+                return null;
+            }
+            
+            jasper = "/br/com/jcomputacao/nfe/danfe/ImpressaoDanfeItemRetratoA4Report.jasper";
+            isi  = this.getClass().getResource(jasper).openStream();
+            if(isi==null) {
+                System.out.println("Nao consegui ler o arquivo : "+jasper);
+                return null;
+            }
+
+            jasper = "/br/com/jcomputacao/nfe/danfe/ImpressaoDanfeInfComplRetratoA4Report.jasper";
+            isic = this.getClass().getResource(jasper).openStream();
+            if(isic==null) {
+                System.out.println("Nao consegui ler o arquivo : "+jasper);
+                return null;
+            }
+
+
+            JasperReport report = (JasperReport) JRLoader.loadObject(is);
+            JasperReport detail = (JasperReport) JRLoader.loadObject(isi);
+            JasperReport cmplto = (JasperReport) JRLoader.loadObject(isic);
+
+            Map parametros = new HashMap();
+            parametros.put("ImpressaoDanfeItemRetratoA4Report_subreport", detail);
+            parametros.put("ImpressaoDanfeInfComplRetratoA4Report_subreport", cmplto);
+            parametros.put("msgVersaoTeste", "");
+            parametros.put("Frente", "");
+            parametros.put("PreImpresso", Boolean.FALSE);
+
+
+            List<NfeDanfe> nfes = new ArrayList<NfeDanfe>();
+            for(br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc proc:procs) {
+                NfeDanfe danfe = new NfeDanfe(proc);
+                danfe.setEmitenteLogoTipo(logotipo);
+                nfes.add(danfe);
+            }
+
+            DanfeDatasource dd = new DanfeDatasource(nfes);
+            //do jeito que esta so irao sair os itens da primeira nota (sempre)
+//            DanfeItemDatasource did = new DanfeItemDatasource(danfe.getItens());
+//            parametros.put("ImpressaoDanfeInfComplRetratoA4Report_datasource", did.getDataSource());
+//            parametros.put("ImpressaoDanfeItemRetratoA4Report_datasource", did.getDataSource());
+            return JasperFillManager.fillReport(report, parametros, dd.getDataSource());
+        } finally {
+            if(is  !=null) is.close();
+            if(isi !=null) isi.close();
+            if(isic!=null) isic.close();
+        }
+    }
+    
     public JasperPrint imprimirNfe310(br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNfeProc proc, Image logotipo) throws JRException, IOException {
         List<br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNfeProc> l = new ArrayList<br.inf.portalfiscal.nfe.xml.pl008h2.nfes.TNfeProc>();
         l.add(proc);
