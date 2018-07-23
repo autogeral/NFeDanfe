@@ -480,7 +480,7 @@ alcançar o tamanho do campo.
             boolean first = true;
             String nFatura = fat.getNFat();
             for (br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
-                int posicaoVirgula = nFatura.indexOf(",");
+                int posicaoVirgula = nFatura != null ? nFatura.indexOf(",") : 0;
                 String numeroDuplicata = nFatura;
                 if(posicaoVirgula > 0) {
                     numeroDuplicata = nFatura.substring(0, posicaoVirgula);
@@ -499,7 +499,7 @@ alcançar o tamanho do campo.
                     }
                     fatura += dupVencimento + " R$" + dup.getVDup().replace(".", ",") + " ";
                 } else {
-                    fatura += " Dup." + numeroDuplicata + " " + dupVencimento + " $" + dup.getVDup().replace(".", ",");
+                    fatura += " Dup." + (numeroDuplicata != null ? numeroDuplicata : dup.getNDup()) + " " + dupVencimento + " $" + dup.getVDup().replace(".", ",");
                 }                
             }
         }
