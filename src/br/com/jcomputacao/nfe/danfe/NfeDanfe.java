@@ -2,6 +2,7 @@ package br.com.jcomputacao.nfe.danfe;
 
 
 import br.com.jcomputacao.nfe.danfe.util.StringUtil;
+import br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe;
 import java.awt.Image;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
@@ -475,8 +476,16 @@ alcançar o tamanho do campo.
         boolean insereCobrancaXmlAtravezNfesPagamentosParcelas = Boolean.parseBoolean(System.getProperty("insere.cobrancaXml.atravez.nfesPagamentosParcelas", "false"));
         if (inf.getCobr() != null && inf.getCobr().getDup() != null) {
             List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
+            TNFe.InfNFe.Cobr.Fat fat = inf.getCobr().getFat();
             boolean first = true;
+            String nFatura = fat.getNFat();
             for (br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
+                int posicaoVirgula = nFatura.indexOf(",");
+                String numeroDuplicata = nFatura;
+                if(posicaoVirgula > 0) {
+                    numeroDuplicata = nFatura.substring(0, posicaoVirgula);
+                    nFatura = nFatura.substring(posicaoVirgula + 1);
+                } 
                 String dupVencimento = "";
                 if (dup != null && dup.getDVenc() != null && dup.getDVenc().length() > 8) {
                     dupVencimento = dup.getDVenc().substring(8)
@@ -490,7 +499,7 @@ alcançar o tamanho do campo.
                     }
                     fatura += dupVencimento + " R$" + dup.getVDup().replace(".", ",") + " ";
                 } else {
-                    fatura += " Dup." + dup.getNDup() + " " + dupVencimento + " $" + dup.getVDup().replace(".", ",");
+                    fatura += " Dup." + numeroDuplicata + " " + dupVencimento + " $" + dup.getVDup().replace(".", ",");
                 }                
             }
         }
