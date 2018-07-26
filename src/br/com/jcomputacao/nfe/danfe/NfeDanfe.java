@@ -478,7 +478,7 @@ alcançar o tamanho do campo.
             List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
             TNFe.InfNFe.Cobr.Fat fat = inf.getCobr().getFat();
             boolean first = true;
-            String nFatura = fat.getNFat();
+            String nFatura = (fat != null ? fat.getNFat() : null);
             for (br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
                 int posicaoVirgula = nFatura != null ? nFatura.indexOf(",") : 0;
                 String numeroDuplicata = nFatura;
