@@ -209,7 +209,7 @@ public class NfeDanfeItem {
                         this.cst = icms.getICMSSN202().getOrig() + icms.getICMSSN202().getCSOSN();
                     } else if (icms.getICMSSN500() != null) {
                         this.cst = icms.getICMSSN500().getOrig() + icms.getICMSSN500().getCSOSN();
-                    } else if (icms.getICMSSN900().getOrig() != null) {
+                    } else if (icms.getICMSSN900() != null) {
                         this.aliquotaIcms = icms.getICMSSN900().getPICMS();
                         this.baseIcms = icms.getICMSSN900().getVBC();
                         this.valorIcms = icms.getICMSSN900().getVICMS();
