@@ -464,7 +464,13 @@ alcançar o tamanho do campo.
         destinatarioFoneFax = dest.getEnderDest().getFone();
         destinatarioUf = dest.getEnderDest().getUF().toString();
         destinatarioInscricaoEstadual = dest.getIE();
-        String indPag = inf.getPag().getDetPag().get(0).getIndPag();
+        String indPag = "X";
+        
+        if (inf.getPag() != null
+                && inf.getPag().getDetPag() != null
+                && inf.getPag().getDetPag().get(0) != null) {
+            indPag = inf.getPag().getDetPag().get(0).getIndPag();
+        }
         
         if("0".equals(indPag)) {
             fatura = "pagamento à vista";
@@ -634,7 +640,7 @@ alcançar o tamanho do campo.
         /**
          * Somente dia de emissao
          */
-        codigoBarrasString += dataEmissao.substring(0, 2);
+        codigoBarrasString += (dataEmissao != null && dataEmissao.length() > 2 ? dataEmissao.substring(0, 2) : "00");
         codigoBarrasString += getDigitoCodigoBarras(codigoBarrasString);
         formataChaveAcesso(chaveAcesso);
         codigoBarrasString = chaveAcesso;
