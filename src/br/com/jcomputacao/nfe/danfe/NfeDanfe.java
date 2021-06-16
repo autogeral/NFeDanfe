@@ -2,7 +2,7 @@ package br.com.jcomputacao.nfe.danfe;
 
 
 import br.com.jcomputacao.nfe.danfe.util.StringUtil;
-import br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe;
+import br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe;
 import java.awt.Image;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
@@ -375,10 +375,10 @@ alcançar o tamanho do campo.
         }
     }
     
-    public NfeDanfe(br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc proc) {
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe nfe = proc.getNFe();
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe inf = nfe.getInfNFe();
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Ide id = inf.getIde();
+    public NfeDanfe(br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNfeProc proc) {
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe nfe = proc.getNFe();
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe inf = nfe.getInfNFe();
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Ide id = inf.getIde();
         NumberFormat nf = NumberFormat.getIntegerInstance();
         nf.setMinimumIntegerDigits(9);
         nf.setGroupingUsed(true);
@@ -424,9 +424,9 @@ alcançar o tamanho do campo.
                          + "NF-e www.nfe.fazenda.gov.br/portal ou no site "
                          + "da Sefaz Autorizadora";
 
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Emit emit = inf.getEmit();
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Dest dest = inf.getDest();
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Total tot = inf.getTotal();
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Emit emit = inf.getEmit();
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Dest dest = inf.getDest();
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Total tot = inf.getTotal();
 
         inscricaoMunicipal = emit.getIM();
 
@@ -481,11 +481,11 @@ alcançar o tamanho do campo.
         }
         boolean insereCobrancaXmlAtravezNfesPagamentosParcelas = Boolean.parseBoolean(System.getProperty("insere.cobrancaXml.atravez.nfesPagamentosParcelas", "false"));
         if (inf.getCobr() != null && inf.getCobr().getDup() != null) {
-            List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
+            List<br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Cobr.Dup> dups = inf.getCobr().getDup();
             TNFe.InfNFe.Cobr.Fat fat = inf.getCobr().getFat();
             boolean first = true;
             String nFatura = (fat != null ? fat.getNFat() : null);
-            for (br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
+            for (br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Cobr.Dup dup : dups) {
                 int posicaoVirgula = nFatura != null ? nFatura.indexOf(",") : 0;
                 String numeroDuplicata = nFatura;
                 if(posicaoVirgula > 0) {
@@ -520,7 +520,7 @@ alcançar o tamanho do campo.
         outrasDespesas = tot.getICMSTot().getVOutro();
         valorIpi = tot.getICMSTot().getVIPI();
         valorTotalNota = tot.getICMSTot().getVNF();
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Transp transporte = inf.getTransp();
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Transp transporte = inf.getTransp();
         if (transporte != null) {
             if (transporte.getTransporta() != null) {
                 transportadorRazaoSocial = StringUtil.htmlIso8859decode(transporte.getTransporta().getXNome());
@@ -542,8 +542,8 @@ alcançar o tamanho do campo.
         }
         
         if(transporte.getVol() != null && !transporte.getVol().isEmpty()){
-            List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Transp.Vol> volumes = transporte.getVol();
-            for(br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Transp.Vol volume:volumes){
+            List<br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Transp.Vol> volumes = transporte.getVol();
+            for(br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Transp.Vol volume:volumes){
                 transportadorPesoBruto = volume.getPesoB();
                 transportadorPesoLiquido = volume.getPesoL();
                 transportadorEspecie = volume.getEsp();
@@ -554,7 +554,7 @@ alcançar o tamanho do campo.
         }
 
         if (tot != null) {
-            br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Total.ISSQNtot issqn = tot.getISSQNtot();
+            br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Total.ISSQNtot issqn = tot.getISSQNtot();
             if (issqn != null) {
                 valorTotalServicos = issqn.getVServ();
                 valorPis    = issqn.getVPIS();
@@ -564,7 +564,7 @@ alcançar o tamanho do campo.
             }
         }
         tipoEmissao = id.getTpEmis();
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.InfAdic infAd = inf.getInfAdic();
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.InfAdic infAd = inf.getInfAdic();
         if (infAd != null) {
             informacoesComplementares = infAd.getInfCpl();
             if(informacoesComplementares==null) {
@@ -659,8 +659,8 @@ alcançar o tamanho do campo.
         }
         
 
-        List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Det> detalhes = inf.getDet();
-        for(br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Det detalhe:detalhes) {
+        List<br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Det> detalhes = inf.getDet();
+        for(br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Det detalhe:detalhes) {
             this.itens.add(new NfeDanfeItem(detalhe));
         }
     }

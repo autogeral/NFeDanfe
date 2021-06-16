@@ -84,13 +84,13 @@ public class DanfeHelper {
         }
     }
     
-    public JasperPrint imprimirNfe400(br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc proc, Image logotipo) throws JRException, IOException {
-        List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc> l = new ArrayList<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc>();
+    public JasperPrint imprimirNfe400(br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNfeProc proc, Image logotipo) throws JRException, IOException {
+        List<br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNfeProc> l = new ArrayList<br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNfeProc>();
         l.add(proc);
         return imprimirNfe400(l, logotipo);
     }
     
-    public JasperPrint imprimirNfe400(List<br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc> procs, Image logotipo) throws JRException, IOException {
+    public JasperPrint imprimirNfe400(List<br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNfeProc> procs, Image logotipo) throws JRException, IOException {
         InputStream is = null;
         InputStream isi = null;
         InputStream isic = null;
@@ -130,7 +130,7 @@ public class DanfeHelper {
 
 
             List<NfeDanfe> nfes = new ArrayList<NfeDanfe>();
-            for(br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNfeProc proc:procs) {
+            for(br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNfeProc proc:procs) {
                 NfeDanfe danfe = new NfeDanfe(proc);
                 danfe.setEmitenteLogoTipo(logotipo);
                 nfes.add(danfe);

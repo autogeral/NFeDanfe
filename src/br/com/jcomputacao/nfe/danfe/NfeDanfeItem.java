@@ -127,7 +127,7 @@ public class NfeDanfeItem {
         this.infCompl = detalhe.getInfAdProd();
     }
 
-    public NfeDanfeItem(br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Det detalhe) {
+    public NfeDanfeItem(br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Det detalhe) {
         if (detalhe.getProd() != null) {
             this.codigo = detalhe.getProd().getCProd();
             this.descricao = StringUtil.htmlIso8859decode(detalhe.getProd().getXProd());
@@ -142,14 +142,14 @@ public class NfeDanfeItem {
             this.valorUnitarioTributario = detalhe.getProd().getVUnTrib();
             //this.codigoB = detalhe.getProd().getCodigBarras();
         }
-        br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Det.Imposto imp = detalhe.getImposto();
+        br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Det.Imposto imp = detalhe.getImposto();
         if (imp != null) {
             List<JAXBElement<?>> content = imp.getContent();
             for (int i = 0; i < content.size(); i++) {
                 JAXBElement<?> j = content.get(i);
 
-                if (j.getValue() instanceof br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TIpi) {
-                    br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TIpi ipi = (br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TIpi) j.getValue();
+                if (j.getValue() instanceof br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TIpi) {
+                    br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TIpi ipi = (br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TIpi) j.getValue();
                     if (ipi != null
                             && ipi.getIPITrib() != null) {
                         this.aliquotaIpi = ipi.getIPITrib().getPIPI();
@@ -157,9 +157,9 @@ public class NfeDanfeItem {
                     }
                 }
 
-                if (j.getValue() instanceof br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Det.Imposto.ICMS) {
-                    br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Det.Imposto.ICMS icms = 
-                            (br.inf.portalfiscal.nfe.xml.pl009v4.nfes.TNFe.InfNFe.Det.Imposto.ICMS) j.getValue();
+                if (j.getValue() instanceof br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Det.Imposto.ICMS) {
+                    br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Det.Imposto.ICMS icms = 
+                            (br.inf.portalfiscal.nfe.xml.pl009v4_2021.nfes.TNFe.InfNFe.Det.Imposto.ICMS) j.getValue();
                     if (icms.getICMS00() != null) {
                         this.aliquotaIcms = icms.getICMS00().getPICMS();
                         this.baseIcms = icms.getICMS00().getVBC();
